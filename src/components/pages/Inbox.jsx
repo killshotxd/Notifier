@@ -1,14 +1,76 @@
 import { useNavigate } from "react-router-dom";
-
+import { UserAuth } from "../../Auth/AuthContext";
+import { collection, doc, getDoc, getDocs } from "firebase/firestore";
+import { db } from "../../Firebase";
+import { useEffect, useState } from "react";
+import moment from "moment";
 const Inbox = () => {
   const navigate = useNavigate();
+
+  const { currentUser } = UserAuth();
+
+  const [notification, setNotification] = useState();
+
+  const getAllNotify = async () => {
+    const { email } = currentUser;
+    // Get user document reference using uid
+    const userDocRef = doc(db, "users", email);
+
+    // Get user document snapshot
+    const userDocSnapshot = await getDoc(userDocRef);
+
+    // Check if the user document exists
+    if (userDocSnapshot.exists()) {
+      // Get user data
+      const userData = userDocSnapshot.data();
+
+      // Get user sub-collections
+      const userCollections = await getDocs(
+        collection(db, "users", email, "Notify")
+      );
+
+      // Map user sub-collection documents to an array
+      const userCollectionData = userCollections.docs.map((doc) => ({
+        did: doc.id,
+        ...doc.data(),
+      }));
+
+      // Combine user data and user sub-collection data
+      const userInfo = {
+        ...userData,
+        Notify: userCollectionData,
+      };
+
+      let time = userInfo.Notify.map((res) => {
+        const timestamp = moment
+          .unix(res.receivedAt.seconds)
+          .add(res.receivedAt.nanoseconds / 1e9);
+        const timeAgo = timestamp.fromNow();
+        return {
+          ...res,
+          timestamp,
+          timeAgo,
+        };
+      });
+      setNotification(time);
+
+      return userInfo;
+    } else {
+      console.log("User document does not exist.");
+    }
+  };
+
+  useEffect(() => {
+    getAllNotify();
+  }, []);
+
   return (
     <>
       <div className="overflow-x-auto w-full">
         <table className="table w-full">
           {/* head */}
-          <thead>
-            <tr>
+          <thead className="bg-blue-100">
+            <tr className="bg-blue-100">
               <th>
                 <label>
                   <input type="checkbox" className="checkbox" />
@@ -28,146 +90,49 @@ const Inbox = () => {
             </tr>
           </thead>
           <tbody>
-            {/* row 1 */}
-            <tr>
-              <th>
-                <label>
-                  <input type="checkbox" className="checkbox" />
-                </label>
-              </th>
-              <td>
-                <div className="flex items-center space-x-3">
-                  <div className="avatar">
-                    <div className="mask mask-squircle w-12 h-12">
-                      <img
-                        src="/tailwind-css-component-profile-2@56w.png"
-                        alt="Avatar Tailwind CSS Component"
-                      />
+            {notification?.map((res) => (
+              <>
+                <tr key={res.did}>
+                  <th>
+                    <label>
+                      <input type="checkbox" className="checkbox" />
+                    </label>
+                  </th>
+                  <td>
+                    <div className="flex items-center space-x-3">
+                      <div className="avatar">
+                        <div className="mask mask-squircle w-12 h-12">
+                          <img
+                            src={res.avatar}
+                            alt="Avatar Tailwind CSS Component"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <div className="font-bold">{res.senderName}</div>
+                        {/* <div className="text-sm opacity-50">United States</div> */}
+                      </div>
                     </div>
-                  </div>
-                  <div>
-                    <div className="font-bold">Hart Hagerty</div>
-                    <div className="text-sm opacity-50">United States</div>
-                  </div>
-                </div>
-              </td>
-              <td>
-                Zemlak, Daniel and Leannon
-                <br />
-                <span className="badge badge-ghost badge-sm">
-                  Desktop Support Technician
-                </span>
-              </td>
-              <td>Purple</td>
-              <th>
-                <button className="btn btn-ghost btn-xs">details</button>
-              </th>
-            </tr>
-            {/* row 2 */}
-            <tr>
-              <th>
-                <label>
-                  <input type="checkbox" className="checkbox" />
-                </label>
-              </th>
-              <td>
-                <div className="flex items-center space-x-3">
-                  <div className="avatar">
-                    <div className="mask mask-squircle w-12 h-12">
-                      <img
-                        src="/tailwind-css-component-profile-3@56w.png"
-                        alt="Avatar Tailwind CSS Component"
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <div className="font-bold">Brice Swyre</div>
-                    <div className="text-sm opacity-50">China</div>
-                  </div>
-                </div>
-              </td>
-              <td>
-                Carroll Group
-                <br />
-                <span className="badge badge-ghost badge-sm">
-                  Tax Accountant
-                </span>
-              </td>
-              <td>Red</td>
-              <th>
-                <button className="btn btn-ghost btn-xs">details</button>
-              </th>
-            </tr>
-            {/* row 3 */}
-            <tr>
-              <th>
-                <label>
-                  <input type="checkbox" className="checkbox" />
-                </label>
-              </th>
-              <td>
-                <div className="flex items-center space-x-3">
-                  <div className="avatar">
-                    <div className="mask mask-squircle w-12 h-12">
-                      <img
-                        src="/tailwind-css-component-profile-4@56w.png"
-                        alt="Avatar Tailwind CSS Component"
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <div className="font-bold">Marjy Ferencz</div>
-                    <div className="text-sm opacity-50">Russia</div>
-                  </div>
-                </div>
-              </td>
-              <td>
-                Rowe-Schoen
-                <br />
-                <span className="badge badge-ghost badge-sm">
-                  Office Assistant I
-                </span>
-              </td>
-              <td>Crimson</td>
-              <th>
-                <button className="btn btn-ghost btn-xs">details</button>
-              </th>
-            </tr>
-            {/* row 4 */}
-            <tr>
-              <th>
-                <label>
-                  <input type="checkbox" className="checkbox" />
-                </label>
-              </th>
-              <td>
-                <div className="flex items-center space-x-3">
-                  <div className="avatar">
-                    <div className="mask mask-squircle w-12 h-12">
-                      <img
-                        src="/tailwind-css-component-profile-5@56w.png"
-                        alt="Avatar Tailwind CSS Component"
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <div className="font-bold">Yancy Tear</div>
-                    <div className="text-sm opacity-50">Brazil</div>
-                  </div>
-                </div>
-              </td>
-              <td>
-                Wyman-Ledner
-                <br />
-                <span className="badge badge-ghost badge-sm">
-                  Community Outreach Specialist
-                </span>
-              </td>
-              <td>Indigo</td>
-              <th>
-                <button className="btn btn-ghost btn-xs">details</button>
-              </th>
-            </tr>
+                  </td>
+                  <td>
+                    {res.subject.slice(0, 10)}
+                    <br />
+                    <span className="badge badge-primary badge-sm">
+                      {res.timeAgo}
+                    </span>
+                  </td>
+                  <td>
+                    {" "}
+                    <span className="badge badge-red">
+                      {res.important ? "Important" : "General"}
+                    </span>
+                  </td>
+                  <th>
+                    <button className="btn btn-ghost btn-xs">details</button>
+                  </th>
+                </tr>
+              </>
+            ))}
           </tbody>
           {/* foot */}
           <tfoot>

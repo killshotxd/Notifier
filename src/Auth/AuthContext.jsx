@@ -23,7 +23,7 @@ export const AuthProvider = ({ children }) => {
     const { user } = await signInWithPopup(auth, provider);
 
     // Add user data to the database
-    const userRef = doc(db, "users", user.uid);
+    const userRef = doc(db, "users", user.email);
     const userData = {
       name: user.displayName,
       email: user.email,

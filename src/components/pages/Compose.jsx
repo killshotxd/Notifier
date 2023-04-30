@@ -2,8 +2,14 @@ import Autosuggest from "react-autosuggest";
 import { UserAuth } from "../../Auth/AuthContext";
 import { useEffect, useState } from "react";
 import { db } from "../../Firebase";
-import { collection, getDocs } from "firebase/firestore";
-
+import {
+  addDoc,
+  collection,
+  getDocs,
+  serverTimestamp,
+} from "firebase/firestore";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 const Compose = () => {
   const { currentUser } = UserAuth();
   const [usersDetails, setUsersDetails] = useState();
@@ -13,8 +19,11 @@ const Compose = () => {
     to: "",
     from: currentUser.email,
     message: "",
+    avatar: currentUser.photoURL,
     subject: "",
     important: false,
+    receivedAt: serverTimestamp(),
+    senderName: currentUser.displayName,
   });
 
   console.log(genValue);
@@ -57,10 +66,6 @@ const Compose = () => {
 
     const inputLength = inputValue.length;
     const users = usersDetails.map((user) => user.email);
-    setGenValue((prev) => ({
-      ...prev,
-      to: inputValue,
-    }));
 
     return inputLength === 0
       ? []
@@ -77,8 +82,25 @@ const Compose = () => {
       to: suggestion,
     }));
   };
+
+  const handleSend = async () => {
+    if (genValue.message == "") {
+      toast("Please enter message !");
+      return;
+    } else if (genValue.subject == "") {
+      toast("Please enter subject !");
+      return;
+    }
+
+    const q = collection(db, "users", genValue.to, "Notify");
+
+    await addDoc(q, genValue);
+    toast("Successfully send Notify");
+  };
+
   return (
     <>
+      <ToastContainer />
       <div className="card  px-3 py-4 rounded-none bg-blue-100 ">
         <div className="containerWrap">
           <p className=" font-semibold ">New Message</p>
@@ -167,7 +189,9 @@ const Compose = () => {
       </div>
 
       <div className="containerWrap">
-        <button className="btn btn-primary">Send Notifier</button>
+        <button onClick={() => handleSend()} className="btn btn-primary">
+          Send Notifier
+        </button>
       </div>
     </>
   );
