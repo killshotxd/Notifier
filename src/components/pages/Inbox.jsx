@@ -102,10 +102,7 @@ const Inbox = () => {
                     <div className="flex items-center space-x-3">
                       <div className="avatar">
                         <div className="mask mask-squircle w-12 h-12">
-                          <img
-                            src={res.avatar}
-                            alt="Avatar Tailwind CSS Component"
-                          />
+                          <img src={res.avatar} alt="profile" />
                         </div>
                       </div>
                       <div>
@@ -128,7 +125,7 @@ const Inbox = () => {
                     </span>
                   </td>
                   <th>
-                    <button className="btn btn-ghost btn-xs">details</button>
+                    <button className="btn btn-ghost btn-xs">View</button>
                   </th>
                 </tr>
               </>

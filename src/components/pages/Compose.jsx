@@ -84,11 +84,8 @@ const Compose = () => {
   };
 
   const handleSend = async () => {
-    if (genValue.message == "") {
-      toast("Please enter message !");
-      return;
-    } else if (genValue.subject == "") {
-      toast("Please enter subject !");
+    if (genValue.message == "" || genValue.subject == "") {
+      toast("Please enter valid details !");
       return;
     }
 
@@ -103,7 +100,7 @@ const Compose = () => {
       <ToastContainer />
       <div className="card  px-3 py-4 rounded-none bg-blue-100 ">
         <div className="containerWrap">
-          <p className=" font-semibold ">New Message</p>
+          <p className=" font-semibold ">New Notify</p>
         </div>
       </div>
       <div
@@ -112,10 +109,6 @@ const Compose = () => {
       >
         <div className="flex h-full  w-full flex-col gap-8">
           <div className="flex flex-col gap-2">
-            <label className="font-semibold" htmlFor="emailTo">
-              {" "}
-              To :{" "}
-            </label>
             <Autosuggest
               suggestions={suggestions}
               onSuggestionsFetchRequested={({ value }) => {
@@ -129,7 +122,7 @@ const Compose = () => {
                 <div className="text-sm">{suggestion}</div>
               )}
               inputProps={{
-                placeholder: "Type here",
+                placeholder: "To...",
                 className:
                   " border-b-2 outline-none focus:border-none focus-within:border-none focus:outline-none focus-within:outline-none input-primary w-full max-w-xs p-2 pl-0",
                 value: value,
@@ -148,15 +141,11 @@ const Compose = () => {
           </div>
 
           <div className="flex flex-col gap-2">
-            <label className="font-semibold" htmlFor="subject ">
-              {" "}
-              Subject :{" "}
-            </label>
             <input
               name="subject"
               type="text"
               onChange={(event) => handleInputChange(event, "subject")}
-              placeholder="Type here"
+              placeholder="Subject..."
               className=" border-b-2 outline-none focus:border-none focus-within:border-none focus:outline-none focus-within:outline-none input-primary w-full max-w-xs p-2 pl-0"
             />
           </div>
@@ -164,7 +153,7 @@ const Compose = () => {
           <div className="flex flex-col gap-2">
             <div className="form-control">
               <label
-                style={{ justifyContent: "start", gap: "55%" }}
+                style={{ justifyContent: "start", gap: "50%" }}
                 className="label cursor-pointer"
               >
                 <span className="label-text font-semibold">Important</span>
@@ -188,7 +177,7 @@ const Compose = () => {
         </div>
       </div>
 
-      <div className="containerWrap">
+      <div className="containerWrap justify-end m-auto flex">
         <button onClick={() => handleSend()} className="btn btn-primary">
           Send Notifier
         </button>
