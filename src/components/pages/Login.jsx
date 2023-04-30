@@ -22,13 +22,31 @@ const Login = () => {
 
   return (
     <>
-      <button
-        onClick={() => {
-          handleLogin();
+      <div
+        className="hero min-h-screen"
+        style={{
+          backgroundImage: `url("https://images.unsplash.com/photo-1567473030492-533b30c5494c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=580&q=80")`,
         }}
       >
-        Login
-      </button>
+        <div className="hero-overlay bg-opacity-90"></div>
+        <div className="hero-content text-center text-neutral-content">
+          <div className="max-w-md">
+            <h1 className="mb-5 text-5xl font-bold">NOTIFIER !</h1>
+            <p className="mb-5">
+              Stay connected with your contacts - Notifier - Your go-to app for
+              hassle-free email notifications.
+            </p>
+            <button
+              onClick={() => {
+                handleLogin();
+              }}
+              className="btn btn-primary"
+            >
+              login
+            </button>
+          </div>
+        </div>
+      </div>
     </>
   );
 };
