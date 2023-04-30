@@ -1,17 +1,45 @@
 import { Routes, Route } from "react-router-dom";
 import Home from "./components/pages/Home";
-import { AuthProvider } from "./Auth/AuthContext";
+import { UserAuth } from "./Auth/AuthContext";
 import Login from "./components/pages/Login";
+import Header from "./components/layouts/Header";
+import { PrivateRoute } from "./Routes/PrivateRoute";
+import Compose from "./components/pages/Compose";
 
 const App = () => {
+  const { currentUser } = UserAuth();
+
   return (
     <>
-      <AuthProvider>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-        </Routes>
-      </AuthProvider>
+      {currentUser ? (
+        <>
+          <Header />
+        </>
+      ) : (
+        ""
+      )}
+
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <PrivateRoute>
+              {" "}
+              <Home />{" "}
+            </PrivateRoute>
+          }
+        />
+        <Route path="/login" element={<Login />} />
+        <Route
+          path="/compose"
+          element={
+            <PrivateRoute>
+              {" "}
+              <Compose />{" "}
+            </PrivateRoute>
+          }
+        />
+      </Routes>
     </>
   );
 };
