@@ -1,6 +1,6 @@
 import Autosuggest from "react-autosuggest";
 import { UserAuth } from "../../Auth/AuthContext";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { db } from "../../Firebase";
 import {
   addDoc,
@@ -10,11 +10,15 @@ import {
 } from "firebase/firestore";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Reaptcha from "reaptcha";
+import { useNavigate } from "react-router-dom";
 const Compose = () => {
   const { currentUser } = UserAuth();
   const [usersDetails, setUsersDetails] = useState();
   const [value, setValue] = useState("");
-
+  const [captchaToken, setCaptchaToken] = useState(null);
+  const captchaRef = useRef(null);
+  const navigate = useNavigate();
   const [genValue, setGenValue] = useState({
     to: "",
     from: currentUser.email,
@@ -25,8 +29,6 @@ const Compose = () => {
     receivedAt: serverTimestamp(),
     senderName: currentUser.displayName,
   });
-
-  console.log(genValue);
 
   const [suggestions, setSuggestions] = useState([]);
 
@@ -83,9 +85,18 @@ const Compose = () => {
     }));
   };
 
+  const verify = () => {
+    captchaRef.current.getResponse().then((res) => {
+      setCaptchaToken(res);
+    });
+  };
+
   const handleSend = async () => {
     if (genValue.message == "" || genValue.subject == "") {
       toast("Please enter valid details !");
+      return;
+    } else if (captchaToken == null) {
+      toast("Please verify Captcha !");
       return;
     }
 
@@ -93,14 +104,20 @@ const Compose = () => {
 
     await addDoc(q, genValue);
     toast("Successfully send Notify");
+    setTimeout(() => {
+      navigate("/");
+    }, 800);
   };
 
   return (
     <>
       <ToastContainer />
-      <div className="card  px-3 py-4 rounded-none bg-blue-100 ">
+      <div
+        className="card  px-3 py-6 rounded-none "
+        style={{ background: "#f2f2f2" }}
+      >
         <div className="containerWrap">
-          <p className=" font-semibold ">New Notify</p>
+          <p className="font-sm font-semibold ">New Notify</p>
         </div>
       </div>
       <div
@@ -165,6 +182,14 @@ const Compose = () => {
                 />
               </label>
             </div>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <Reaptcha
+              sitekey={import.meta.env.VITE_APP_SITE_KEY}
+              ref={captchaRef}
+              onVerify={verify}
+            />
           </div>
         </div>
 
