@@ -13,7 +13,7 @@ import moment from "moment";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import TableRow from "../table/TableRow";
-import Footer from "../layouts/Footer";
+
 const Inbox = () => {
   const navigate = useNavigate();
 
