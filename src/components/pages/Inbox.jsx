@@ -12,6 +12,8 @@ import { useEffect, useState } from "react";
 import moment from "moment";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import TableRow from "../table/TableRow";
+import Footer from "../layouts/Footer";
 const Inbox = () => {
   const navigate = useNavigate();
 
@@ -66,6 +68,10 @@ const Inbox = () => {
           timeAgo,
         };
       });
+
+      // Sort notifications by timestamp in ascending order
+      time.sort((a, b) => b.timestamp - a.timestamp);
+
       setNotification(time);
       setLoading(false);
       return userInfo;
@@ -91,7 +97,7 @@ const Inbox = () => {
   return (
     <>
       <ToastContainer />
-      <div className="overflow-x-auto w-full ok">
+      <div className="overflow-x-auto min-h-screen w-full ok">
         {loading ? (
           <div
             className=" flex m-auto items-center justify-center loader"
@@ -118,57 +124,13 @@ const Inbox = () => {
             </thead>
             <tbody>
               {notification?.map((res) => (
-                <>
-                  <tr key={res.did}>
-                    <th>
-                      <label>
-                        <input
-                          type="checkbox"
-                          className="checkbox"
-                          onChange={(e) => handleCheckboxChange(e, res)}
-                        />
-                      </label>
-                    </th>
-                    <td>
-                      <div className="flex items-center space-x-3">
-                        <div className="avatar">
-                          <div className="mask mask-squircle w-12 h-12">
-                            <img src={res.avatar} alt="profile" />
-                          </div>
-                        </div>
-                        <div>
-                          <div className="font-bold">{res.senderName}</div>
-                          {/* <div className="text-sm opacity-50">United States</div> */}
-                        </div>
-                      </div>
-                    </td>
-                    <td>
-                      {res.subject.slice(0, 10)}
-                      <br />
-                      <span className="badge badge-primary badge-sm">
-                        {res.timeAgo}
-                      </span>
-                    </td>
-                    <td>
-                      {" "}
-                      <span className="badge badge-red">
-                        {res.important ? "Important" : "General"}
-                      </span>
-                    </td>
-                    <th>
-                      {checked === res.did ? (
-                        <button
-                          className="btn btn-ghost btn-xs"
-                          onClick={() => deleteNotify(res.did)}
-                        >
-                          Delete
-                        </button>
-                      ) : (
-                        <button className="btn btn-ghost btn-xs">View</button>
-                      )}
-                    </th>
-                  </tr>
-                </>
+                <TableRow
+                  key={res.did}
+                  res={res}
+                  handleCheckboxChange={handleCheckboxChange}
+                  deleteNotify={deleteNotify}
+                  checked={checked}
+                />
               ))}
             </tbody>
             {/* foot */}

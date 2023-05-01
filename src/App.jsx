@@ -3,6 +3,7 @@ import { UserAuth } from "./Auth/AuthContext";
 import Header from "./components/layouts/Header";
 import { PrivateRoute } from "./Routes/PrivateRoute";
 import { lazy, Suspense } from "react";
+import MailBox from "./components/pages/MailBox";
 
 const Home = lazy(() => import("./components/pages/Home"));
 const Login = lazy(() => import("./components/pages/Login"));
@@ -20,44 +21,42 @@ const App = () => {
       ) : (
         ""
       )}
-
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <PrivateRoute>
-              <Suspense
-                fallback={
-                  <div
-                    className=" flex m-auto items-center justify-center loader"
-                    style={{ height: "80vh", width: "100vw" }}
-                  ></div>
-                }
-              >
+      <Suspense
+        fallback={
+          <div
+            className=" flex m-auto items-center justify-center loader"
+            style={{ height: "80vh", width: "100vw" }}
+          ></div>
+        }
+      >
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <PrivateRoute>
                 <Home />
-              </Suspense>
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/login"
-          element={
-            <Suspense fallback={<div>Loading...</div>}>
-              <Login />
-            </Suspense>
-          }
-        />
-        <Route
-          path="/compose"
-          element={
-            <PrivateRoute>
-              <Suspense fallback={<div>Loading...</div>}>
+              </PrivateRoute>
+            }
+          />
+          <Route path="/login" element={<Login />} />
+          <Route
+            path="/compose"
+            element={
+              <PrivateRoute>
                 <Compose />
-              </Suspense>
-            </PrivateRoute>
-          }
-        />
-      </Routes>
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/notifyMail"
+            element={
+              <PrivateRoute>
+                <MailBox />
+              </PrivateRoute>
+            }
+          />
+        </Routes>
+      </Suspense>
     </>
   );
 };

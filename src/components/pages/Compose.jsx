@@ -11,8 +11,11 @@ import {
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Reaptcha from "reaptcha";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import Footer from "../layouts/Footer";
 const Compose = () => {
+  const { state } = useLocation();
+
   const { currentUser } = UserAuth();
   const [usersDetails, setUsersDetails] = useState();
   const [value, setValue] = useState("");
@@ -142,7 +145,7 @@ const Compose = () => {
                 placeholder: "To...",
                 className:
                   " border-b-2 outline-none focus:border-none focus-within:border-none focus:outline-none focus-within:outline-none input-primary w-full max-w-xs p-2 pl-0",
-                value: value,
+                value: state || value,
                 onChange: (event, { newValue }) => {
                   setValue(newValue);
                 },
@@ -202,11 +205,13 @@ const Compose = () => {
         </div>
       </div>
 
-      <div className="containerWrap justify-end m-auto flex">
+      <div className="containerWrap justify-end m-auto pb-4 flex">
         <button onClick={() => handleSend()} className="btn btn-primary">
           Send Notifier
         </button>
       </div>
+
+      <Footer />
     </>
   );
 };
