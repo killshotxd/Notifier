@@ -23,7 +23,7 @@ const Compose = () => {
   const captchaRef = useRef(null);
   const navigate = useNavigate();
   const [genValue, setGenValue] = useState({
-    to: "",
+    to: state || "",
     from: currentUser.email,
     message: "",
     avatar: currentUser.photoURL,
@@ -32,7 +32,7 @@ const Compose = () => {
     receivedAt: serverTimestamp(),
     senderName: currentUser.displayName,
   });
-
+  console.log(genValue);
   const [suggestions, setSuggestions] = useState([]);
 
   const getAllUsers = async () => {

@@ -26,7 +26,7 @@ const TableRow = ({ res, handleCheckboxChange, deleteNotify, checked }) => {
         </div>
       </td>
       <td>
-        <span className="font-bold">{res.subject.slice(0, 10)}</span>
+        <span className="font-bold">{res.subject}</span>
         <br />
         <span className="badge badge-primary badge-sm">{res.timeAgo}</span>
       </td>

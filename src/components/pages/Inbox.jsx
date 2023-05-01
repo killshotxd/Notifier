@@ -5,7 +5,7 @@ import {
   deleteDoc,
   doc,
   getDoc,
-  getDocs,
+  onSnapshot,
 } from "firebase/firestore";
 import { db } from "../../Firebase";
 import { useEffect, useState } from "react";
@@ -41,40 +41,42 @@ const Inbox = () => {
       const userData = userDocSnapshot.data();
 
       // Get user sub-collections
-      const userCollections = await getDocs(
-        collection(db, "users", email, "Notify")
-      );
+      const notifyCollectionRef = collection(db, "users", email, "Notify");
 
-      // Map user sub-collection documents to an array
-      const userCollectionData = userCollections.docs.map((doc) => ({
-        did: doc.id,
-        ...doc.data(),
-      }));
+      // Listen for changes in the user sub-collection
+      const unsubscribe = onSnapshot(notifyCollectionRef, (querySnapshot) => {
+        const userCollectionData = querySnapshot.docs.map((doc) => ({
+          did: doc.id,
+          ...doc.data(),
+        }));
 
-      // Combine user data and user sub-collection data
-      const userInfo = {
-        ...userData,
-        Notify: userCollectionData,
-      };
-
-      let time = userInfo.Notify.map((res) => {
-        const timestamp = moment
-          .unix(res.receivedAt.seconds)
-          .add(res.receivedAt.nanoseconds / 1e9);
-        const timeAgo = timestamp.fromNow();
-        return {
-          ...res,
-          timestamp,
-          timeAgo,
+        // Combine user data and user sub-collection data
+        const userInfo = {
+          ...userData,
+          Notify: userCollectionData,
         };
+
+        let time = userInfo.Notify.map((res) => {
+          const timestamp = moment
+            .unix(res.receivedAt.seconds)
+            .add(res.receivedAt.nanoseconds / 1e9);
+          const timeAgo = timestamp.fromNow();
+          return {
+            ...res,
+            timestamp,
+            timeAgo,
+          };
+        });
+
+        // Sort notifications by timestamp in ascending order
+        time.sort((a, b) => b.timestamp - a.timestamp);
+
+        setNotification(time);
+        setLoading(false);
+        return userInfo;
       });
 
-      // Sort notifications by timestamp in ascending order
-      time.sort((a, b) => b.timestamp - a.timestamp);
-
-      setNotification(time);
-      setLoading(false);
-      return userInfo;
+      return unsubscribe;
     } else {
       console.log("User document does not exist.");
     }
@@ -82,6 +84,12 @@ const Inbox = () => {
 
   useEffect(() => {
     getAllNotify();
+    if (notification && notification.length > 0) {
+      const lastNotification = notification[0];
+      toast(
+        `New mail from ${lastNotification.senderName} with subject ${lastNotification.subject}`
+      );
+    }
   }, []);
 
   const deleteNotify = async (did) => {
@@ -91,7 +99,6 @@ const Inbox = () => {
     );
     await deleteDoc(docRef);
     toast("Notify Deleted !");
-    getAllNotify();
   };
 
   return (
