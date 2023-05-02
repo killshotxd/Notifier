@@ -29,16 +29,19 @@ const MailBox = () => {
         <div className="hero">
           <div className="hero-content flex-col">
             <div className="font-bold flex items-center gap-4">
-              Message:{" "}
+              From:
               <div className="avatar">
                 <div className="w-8 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
                   <img src={data.avatar} />
                 </div>
               </div>
-              <span className="text-sm ">{data.timeAgo}</span>
+              {data.senderName}
+              <span className="text-sm badge badge-primary badge-sm ">
+                {data.timeAgo}
+              </span>
             </div>
 
-            <div className="bg-base-200 p-4 w-96 h-auto">
+            <div className="bg-base-200 p-4 w-full sm:min-w-70 h-auto">
               <p>{data.message}</p>
             </div>
             <div>

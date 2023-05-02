@@ -119,13 +119,13 @@ const Compose = () => {
         className="card  px-3 py-6 rounded-none "
         style={{ background: "#f2f2f2" }}
       >
-        <div className="containerWrap">
+        <div className="containerWrap px-4">
           <p className="font-sm font-semibold ">New Notify</p>
         </div>
       </div>
       <div
         style={{ flexDirection: "unset" }}
-        className="card containerWrap py-4 justify-between h-96 "
+        className="card containerWrap col700 py-4 px-4 justify-between h-96 "
       >
         <div className="flex h-full  w-full flex-col gap-8">
           <div className="flex flex-col gap-2">
@@ -196,7 +196,7 @@ const Compose = () => {
           </div>
         </div>
 
-        <div className="w-full h-full m-auto justify-center flex flex-col">
+        <div className="w-full text700 h-full m-auto justify-center flex flex-col">
           <textarea
             className="textarea h-full textarea-primary"
             placeholder="Message.."
@@ -205,7 +205,7 @@ const Compose = () => {
         </div>
       </div>
 
-      <div className="containerWrap justify-end m-auto pb-4 flex">
+      <div className="containerWrap btn700 px-4 justify-end m-auto pb-4 flex">
         <button onClick={() => handleSend()} className="btn btn-primary">
           Send Notifier
         </button>

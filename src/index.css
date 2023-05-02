@@ -45,3 +45,17 @@
     transform: rotate(360deg);
   }
 }
+
+@media screen and (max-width: 700px) {
+  .col700 {
+    flex-direction: column !important;
+  }
+  .text700 {
+    padding: 1rem;
+    padding-left: 0px;
+  }
+  .btn700 {
+    padding-top: 2rem;
+    justify-content: center !important;
+  }
+}
